@@ -1,0 +1,103 @@
+---
+title: 'PADP 9200: Problem Set 2'
+output:
+  html_document:
+    df_print: paged
+---
+
+For this assignment, please submit EITHER a .r or .Rmd file via the ELC by Wednesday, February 13th by 5:00pm. If you would like you can use this .Rmd file as a template and fill in the code.
+
+The dataset that we will be working with is the CDC BRFSS dataset described below. 
+
+*The Behavioral Risk Factor Surveillance System (BRFSS) is an annual telephone survey of 350,000 people in the United States. As its name implies, the BRFSS is designed to identify risk factors in the adult population and report emerging health trends. For example, respondents are asked about their diet and weekly physical activity, their HIV/AIDS status, possible tobacco use, and even their level of healthcare coverage. The BRFSS Web site (http://www.cdc.gov/brfss) contains a complete description of the survey, including the research questions that motivate the study and many interesting results derived from the data.
+
+We will focus on a random sample of 20,000 people from the BRFSS survey conducted in 2000. While there are over 200 variables in this data set, we will work with a small subset.
+
+We begin by loading the data set of 20,000 observations into the R workspace. After launching RStudio, enter the following command.*
+
+```{r}
+# Load the dataset
+source("http://www.openintro.org/stat/data/cdc.R")
+```
+
+## Question 1
+
+How many observations are there in this data set? How many variables? For each variable, identify its data type (e.g. integer, factor).
+
+```{r}
+## CODE FOR QUESTION 1
+
+
+```
+
+## Question 2
+
+Create a numerical summary for height and age, and compute the interquartile range for each. Compute the relative frequency distribution for *gender* and *exerany*. How many males are in the sample? What proportion of the sample reports being in excellent health?
+
+```{r}
+## CODE FOR QUESTION 2
+
+
+```
+
+
+## Question 3
+
+Create a new data frame called *under23_and_smoke* that contains all observations of respondents under the age of 23 that have smoked 100 cigarettes in their lifetime. Write the command you used to create the new object as the answer to this exercise.
+
+```{r}
+## CODE FOR QUESTION 3
+
+
+```
+
+## Question 4
+
+Let’s consider a new variable: the difference between desired weight (*wtdesire*) and current weight (*weight*). Create this new variable by subtracting the two columns in the data frame and assigning them to a new object called *wdiff*.
+
+What type of data is *wdiff*? If an observation *wdiff* is 0, what does this mean about the person’s weight and desired weight. What if *wdiff* is positive or negative?
+
+
+```{r}
+## CODE FOR QUESTION 4
+
+
+```
+
+## Question 5
+
+Health insurance companies are very interested in predicting who is more likely to be a smoker and want you to build a model that predicts whether someone is a smoker using the *smoke100* as the target or outcome and all of the other variables as features or covariates. 
+
+To start this process, you have to divide your data into a training and a testing dataset. Please create two dataframes:
+
+- *smoker_train* which contains a random sample of 50% of the observations that you will use to train the algorithms
+
+- *smoker_test* which contains a random sample of the remaining observations which will be used to assess performance of your algorithms. 
+
+Please report the code used to produce these two datasets.
+```{r}
+## CODE FOR QUESTION 5
+
+
+```
+
+## Question 6
+
+Using the *smoker_train* data ONLY, estimate a linear regression model based on the prediction model mentioned in Question 5 and report the regression table in your results. 
+
+In the code below I provide an example of how to estimate a regression model and report results.
+
+```{r}
+## CODE FOR QUESTION 6
+
+# Example of a regression model using the full dataset
+sample.model = lm(smoke100~exerany+height + weight, data=cdc) # This estmiates the model
+
+# This produces the output
+summary(sample.model)
+
+
+```
+
+
+
