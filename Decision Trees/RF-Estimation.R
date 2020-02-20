@@ -9,20 +9,29 @@ pacman::p_load(tm,SnowballC,foreign,plyr,
 ############ Training and testing ########################################
 source("http://www.openintro.org/stat/data/cdc.R")
 
+# Truncate the cdc dataset to 1000 observations
+cdc.trunc = cdc[1:1000,]
+
 # Take training and test data from Problem Set 2 to predict smoker status using random forests
 
 set.seed(33)
 
-index = sample(nrow(final.data), 0.8* nrow(final.data))# Generates the randomized indices.
+index = sample(nrow(cdc.trunc), 0.8* nrow(cdc.trunc))# Generates the randomized indices.
 # Create the training data
-smoker_train = cdc[index,] # Training data
-smoker_test = cdc[-index,] # Test data
+smoker_train = cdc.trunc[index,] # Training data
+smoker_test = cdc.trunc[-index,] # Test data
+
+# Did it work?
+dim(smoker_train)
+dim(smoker_test)
 
 library(ranger)
 
 ############ Random Forest with Ranger ########################################
 
-rf_fit<-ranger(factor(smoke100)~., data=traindata, 
+# Training the algorithm
+
+rf_fit<-ranger(factor(smoke100) ~ ., data=smoker_train, 
                                  importance='impurity',
                                  write.forest=TRUE,
                                  probability=TRUE)
@@ -35,7 +44,7 @@ rf_fit<-ranger(factor(smoke100)~., data=traindata,
 ################################################################################################
 ################################################################################################
 
-trees=rpart(factor(trainY)~., traindata)
+trees=rpart(factor(smoke100)~., smoker_train)
 rpart.plot(trees)
 
 
@@ -47,17 +56,26 @@ rpart.plot(trees)
 ################################################################################################
 
 
-# With ranger we have to generate the predicted probabilities and classify the tweets ourselves
-rf_probs<-predict(rf_fit,data.frame(testdata))
+# (2) take the trained model "rf_fit" and predict smoking status (smoke100) on the 
+# test data
+
+rf_probs<-predict(rf_fit,data.frame(smoker_test))
+
+# Classifying the people in the test data into smoker or non-smoker based on
+# the predicted probabilities from rf_probs
 
 rf_class<-ifelse(rf_probs$predictions[,2] > 0.5, 1,0)
 
 predicted_class = factor(rf_class)
-true_class = factor(testdata$testY)
+true_class = factor(smoker_test$smoke100)
 
 cmat = confusionMatrix(predicted_class,true_class, positive = "1")
 cmat
 
+# Precision, recall and F1
+precision = cmat$byClass[5]
+recall = cmat$byClass[6]
+F1 = cmat$byClass[7]
 
 ################################################################################################
 ################################################################################################
@@ -92,11 +110,12 @@ ggplot(importance.data,
   geom_bar(stat="identity", position="dodge")+ coord_flip()+
   ylab("Variable Importance")+
   xlab("")+
-  ggtitle("Word Importance Plot")+
+  ggtitle("Variable Importance Plot for Predicting Smoking Status")+
   guides(fill=F)+
   scale_fill_gradient(low="red", high="blue")
 
-
+setwd('/Users/jasona/Dropbox/Teaching Spring 2020/PADP 9200 | SP20/Decision Trees')
+ggsave("importanceplot.png")
 
 
 
