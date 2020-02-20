@@ -8,26 +8,21 @@ pacman::p_load(tm,SnowballC,foreign,plyr,
 
 ############ Training and testing ########################################
 source("http://www.openintro.org/stat/data/cdc.R")
-# Divide into train and test with a 70/30 split
-#set.seed(33)
-
-#train=sample(1:dim(dfm_mat)[1],   # Creating an index with each of the observation numbers and randomly shuffling them using a 70/30 split
-#             dim(dfm_mat)[1]*0.7)
-#trainX = dfm_mat[train,] # Defines training data
-#testX = dfm_mat[-train,] # Defines test data
-#trainY = viraltweets[train]
-#testY = viraltweets[-train]
-
-#traindata<-data.frame(trainY,trainX)
-#testdata<-data.frame(testY,testX)
 
 # Take training and test data from Problem Set 2 to predict smoker status using random forests
+
+set.seed(33)
+
+index = sample(nrow(final.data), 0.8* nrow(final.data))# Generates the randomized indices.
+# Create the training data
+smoker_train = cdc[index,] # Training data
+smoker_test = cdc[-index,] # Test data
 
 library(ranger)
 
 ############ Random Forest with Ranger ########################################
 
-rf_fit<-ranger(factor(trainY)~., data=traindata, 
+rf_fit<-ranger(factor(smoke100)~., data=traindata, 
                                  importance='impurity',
                                  write.forest=TRUE,
                                  probability=TRUE)
